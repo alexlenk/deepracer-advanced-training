@@ -8,3 +8,6 @@ mkdir deepracer-simapp
 tar xvfz deepracer-simapp.tar.gz -C deepracer-simapp
 rm -rf build/simapp/bundle/*
 tar xvf deepracer-simapp/bundle.tar -C build/simapp/bundle
+cd build/simapp/bundle/bundle/opt/install/deepracer_simulation_environment/share/deepracer_simulation_environment/meshes
+mv meshes meshes.org
+ln -s meshes.org meshes
