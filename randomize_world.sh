@@ -61,6 +61,8 @@ sudo /tmp/aws/install
 
 TIMER=1200
 echo Setting restart timer to $TIMER seconds ...
-/bin/bash -c "sleep $TIMER;aws robomaker restart-simulation-job --job='$AWS_ROBOMAKER_SIMULATION_JOB_ARN'" &
+#/bin/bash -c "sleep $TIMER;aws robomaker restart-simulation-job --job='$AWS_ROBOMAKER_SIMULATION_JOB_ARN'" &
+/bin/bash -c "sleep 3;aws robomaker describe-simulation-job --job='$AWS_ROBOMAKER_SIMULATION_JOB_ARN'" &
+
 
 echo Done!
