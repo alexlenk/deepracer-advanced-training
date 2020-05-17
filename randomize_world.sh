@@ -53,8 +53,8 @@ echo Road: Replacing ${ROADS[$WORLD]} with $TEX_ROAD
 cp /home/robomaker/meshes/$TEX_ROAD /home/robomaker/meshes/${ROADS[$WORLD]}
 cp /home/robomaker/meshes/$TEX_GRASS /home/robomaker/meshes/${GRASS[$WORLD]}
 
-TIMER=1200
-echo Setting restart timer to $TIMER seconds ...
-/bin/bash -c "sleep $TIMER;reboot" &
+#TIMER=1200
+#echo Setting restart timer to $TIMER seconds ...
+#/bin/bash -c "sleep $TIMER;reboot" &
 
 echo Done!
