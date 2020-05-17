@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 WORLD=$1
 echo Copying Folder ...
@@ -15,8 +15,6 @@ ROAD_TEXTURES=(China_track/textures/China_track_landmark_U_01.png China_track/te
 WALL_TEXTURES=(reinvent/textures/walls_light.jpg reinvent/textures/walls_org.jpg reinvent/textures/walls_dark.jpg)
 WALL_TEXTURES2019=(reInvent2019_track/textures/walls_light.png reInvent2019_track/textures/wall.png reInvent2019_track/textures/walls_dark.png)
 
-echo Checkpoint1
-
 declare -A GRASS
 GRASS[New_York_Track]=New_York_Track/textures/Track_field_grass_01.png
 GRASS[China_track]=China_track/textures/China_track_field_grass_T_01.png
@@ -29,8 +27,6 @@ GRASS[Canada_Training]=Canada_Training/textures/Canada_track_field_grass_01.png
 GRASS[Bowtie_track]=Bowtie_track/textures/Bowtie_track_field.png
 GRASS[Spain_track]=Spain_track/textures/Spain_Track_field_grass_T_01.png
 
-echo Checkpoint2
-
 declare -A ROADS
 ROADS[New_York_Track]=New_York_Track/textures/Track_road_01.png
 ROADS[China_track]=China_track/textures/China_track_road_T_01.png
@@ -42,13 +38,10 @@ ROADS[reinvent_base]=reinvent/textures/Road_DIFF.png
 ROADS[Canada_Training]=Canada_Training/textures/Canada_track_road_T_01.png
 ROADS[Bowtie_track]=Bowtie_track/textures/Bowtie_track_road.png
 ROADS[Spain_track]=Spain_track/textures/Spain_track_road_T_01.png
-echo Checkpoint3
 
 declare -A WALLS
 WALLS[reInvent2019_track]=reInvent2019_track/textures/wall.png
 WALLS[reinvent_base]=reinvent/textures/walls.jpg
-
-echo Checkpoint4
 
 #cp /home/robomaker/workspace/applications/simulation-application/bundle/opt/install/deepracer_simulation_environment/share/deepracer_simulation_environment/meshes.org/China_track/textures/China_track_landmark_U_07.png /home/robomaker/meshes/Spain_track/textures/Spain_Track_field_grass_T_01.png 
 TEX_ROAD=${ROAD_TEXTURES[$RANDOM % ${#ROAD_TEXTURES[@]} ]}
