@@ -4,10 +4,7 @@ WORLD=$1
 echo Copying Folder ...
 cp -rf /home/robomaker/workspace/applications/simulation-application/bundle/opt/install/deepracer_simulation_environment/share/deepracer_simulation_environment/meshes.org /home/robomaker/meshes
 ls -al /home/robomaker/workspace/applications/simulation-application/bundle/opt/install/deepracer_simulation_environment/share/deepracer_simulation_environment/meshes/
-echo Modifying Grass ...
-
-WORLDS=(New_York_Track China_track Virtual_May19_Train_track Mexico_track Tokyo_Training_track Canada_Training Bowtie_track)
-LEN_WORLDS=${#WORLDS[@]}
+echo Modifying World ...
 
 GRASS_TEXTURES_SIMPLE=(New_York_Track/textures/Wood.png reinvent/textures/Road_DIFF.png New_York_Track/textures/Concrete_01.png New_York_Track/textures/Concrete_02.png New_York_Track/textures/Concrete_03.png New_York_Track/textures/Concrete_04.png New_York_Track/textures/Concrete_05.png New_York_Track/textures/Concrete_06.png New_York_Track/textures/Concrete_07.png Canada_Training/textures/Canada_track_concrete_T_01.png Canada_Training/textures/Canada_track_concrete_T_02.png Canada_Training/textures/Canada_track_concrete_T_03.png Canada_Training/textures/Canada_track_concrete_T_04.png Canada_Training/textures/Canada_track_concrete_T_05.png New_York_Track/textures/Track_road_01.png)
 GRASS_TEXTURES=(China_track/textures/China_track_landmark_U_01.png China_track/textures/China_track_landmark_U_04.png China_track/textures/China_track_landmark_U_07.png China_track/textures/China_track_glass_T_01.png China_track/textures/China_track_glass_T_03.png China_track/textures/China_track_glass_T_05.png China_track/textures/China_track_sea_U_02.png China_track/textures/China_track_sign_U_01.png Mexico_track/textures/Mexico_track_door_U_02.png Mexico_track/textures/Mexico_track_door_U_01.png Mexico_track/textures/Mexico_track_landmark_U_02.png Mexico_track/textures/Mexico_track_landmark_U_03_01.png Mexico_track/textures/Mexico_track_landmark_U_03_02.png Mexico_track/textures/Mexico_track_landmark_U_05.png Mexico_track/textures/Mexico_track_building_wall_U_01.png Canada_Training/textures/Canada_track_cloud_T_01.png Canada_Training/textures/Canada_track_building_wall_U_01.png New_York_Track/textures/Signs_02.png)
@@ -49,6 +46,10 @@ WALLS[reinvent_base]=reinvent/textures/walls.jpg
 #cp /home/robomaker/workspace/applications/simulation-application/bundle/opt/install/deepracer_simulation_environment/share/deepracer_simulation_environment/meshes.org/China_track/textures/China_track_landmark_U_07.png /home/robomaker/meshes/Spain_track/textures/Spain_Track_field_grass_T_01.png 
 TEX_ROAD=${ROAD_TEXTURES[$RANDOM % ${#ROAD_TEXTURES[@]} ]}
 TEX_GRASS=${GRASS_TEXTURES[$RANDOM % ${#GRASS_TEXTURES[@]} ]}
+
+echo Grass: Replacing ${GRASS[$WORLD]} with $TEX_GRASS
+echo Road: Replacing ${ROADS[$WORLD]} with $TEX_ROAD
+
 cp /home/robomaker/meshes/$TEX_ROAD /home/robomaker/meshes/${ROADS[$WORLD]}
 cp /home/robomaker/meshes/$TEX_GRASS /home/robomaker/meshes/${GRASS[$WORLD]}
 
