@@ -53,7 +53,11 @@ echo Road: Replacing ${ROADS[$WORLD]} with $TEX_ROAD
 cp /home/robomaker/meshes/$TEX_ROAD /home/robomaker/meshes/${ROADS[$WORLD]}
 cp /home/robomaker/meshes/$TEX_GRASS /home/robomaker/meshes/${GRASS[$WORLD]}
 
-sudo apt-get -y install awscli
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+#sudo apt-get update
+#sudo apt-get -y install --no-install-recommends apt-utils awscli
 
 TIMER=1200
 echo Setting restart timer to $TIMER seconds ...
