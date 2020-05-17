@@ -6,3 +6,5 @@ python3 sim_app_bundler.py --untar deepracer-simapp.tar.gz
 DIR="build/simapp/bundle/opt/install/deepracer_simulation_environment/share/deepracer_simulation_environment"
 mv $DIR/meshes $DIR/meshes.org
 ln -s ./meshes.org $DIR/meshes
+
+# Replace 'rospy.get_param("WORLD_NAME")' with 'os.environ["WORLD_NAME"]' in /build/simapp/bundle/opt/install/sagemaker_rl_agent/lib/python3.5/site-packages/markov/track_geom/track_data.py
