@@ -4,6 +4,8 @@ import os
 from os import path
 import subprocess
 
+restart_time = 60
+
 if os.environ["S3_YAML_NAME"].split("_")[0] == "eval":
     os.environ["JOB_TYPE"] = "EVALUATION"
 else:
@@ -20,6 +22,9 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
     print(output)
     if err is not None:
         print("################### ERROR: " + str(err))
+
+    print("Scheduling restart in " + str(restart_time) + " seconds ...")
+    subprocess.Popen("sleep " + str(restart_time) + ";echo ######## RESTART #########;aws robomaker describe-simulation-job --job=\"$AWS_ROBOMAKER_SIMULATION_JOB_ARN\" --region=us-east-1", shell=True)
     print("Script done...")
 else:
     print("Skipping World Randomization in " + os.environ["JOB_TYPE"] + " Job")
