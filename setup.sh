@@ -15,9 +15,13 @@ subprocess.call("curl https:\/\/raw.githubusercontent.com\/alexlenk\/deepracer-a
 sys.path.insert(1, "\/home\/robomaker")\
 import randomize_world\
 import roslaunch/g' build/simapp/bundle/opt/ros/kinetic/bin/roslaunch
-
-s3_bucket=deepracer-simapp-$(uuidgen)
 python3 sim_app_bundler.py --tar
-aws s3 cp build/output.tar.gz s3://$s3_bucket/deepracer-custom-simaapp.tar.gz
-app_arn=$(aws robomaker list-simulation-applications | grep -o arn:.*deepracer-simapp-[^\"]*)
-aws robomaker update-simulation-application --sources="s3Bucket=$s3_bucket,s3Key=deepracer-custom-simaapp.tar.gz,architecture=X86_64" --application="$app_arn" --simulation-software-suite="name=Gazebo,version=7" --robot-software-suite="name=ROS,version=Kinetic" --rendering-engine="name=OGRE,version=1.x"
+
+s3_bucket=$(aws s3 ls --region=us-east-1 | grep -o deepracer-simapp-.*)
+if [ "$s3_bucket" = "" ]; then
+    s3_bucket=deepracer-simapp-$(uuidgen)
+fi
+aws s3 mb s3://$s3_bucket --region=us-east-1
+aws s3 cp build/output.tar.gz s3://$s3_bucket/deepracer-custom-simapp.tar.gz --region=us-east-1
+app_arn=$(aws robomaker list-simulation-applications --region=us-east-1 | grep -o arn:.*deepracer-simapp-[^\"]*)
+aws robomaker update-simulation-application --sources="s3Bucket=$s3_bucket,s3Key=deepracer-custom-simapp.tar.gz,architecture=X86_64" --application="$app_arn" --simulation-software-suite="name=Gazebo,version=7" --robot-software-suite="name=ROS,version=Kinetic" --rendering-engine="name=OGRE,version=1.x" --region=us-east-1
