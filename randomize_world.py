@@ -18,7 +18,8 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
     (output, err) = p.communicate()
     p_status = p.wait()
     print(output)
-    print("################### ERROR: " + err)
+    if err is not None:
+        print("################### ERROR: " + str(err))
     print("Script done...")
 else:
     print("Skipping World Randomization in " + os.environ["JOB_TYPE"] + " Job")
