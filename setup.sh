@@ -2,7 +2,7 @@
 
 aws s3 cp s3://deepracer-managed-resources-us-east-1/deepracer-simapp.tar.gz .
 curl https://raw.githubusercontent.com/aws-samples/aws-deepracer-workshops/master/Advanced%20workshops/AI%20Driving%20Olympics%202019/challenge_train_w_PPO/sim_app_bundler.py -o sim_app_bundler.py
-python3 sim_app_bundler.py --untar deepracer-simapp.tar.gz
+python sim_app_bundler.py --untar deepracer-simapp.tar.gz
 DIR="build/simapp/bundle/opt/install/deepracer_simulation_environment/share/deepracer_simulation_environment"
 mv $DIR/meshes $DIR/meshes.org
 ln -s /home/robomaker/meshes $DIR/meshes
@@ -17,7 +17,7 @@ import randomize_world\
 import roslaunch/g' build/simapp/bundle/opt/ros/kinetic/bin/roslaunch
 
 s3_bucket=deepracer-simapp-$(uuidgen)
-python3 sim_app_bundler.py --tar
+python sim_app_bundler.py --tar
 aws s3 cp build/output.tar.gz s3://$s3_bucket/deepracer-custom-simaapp.tar.gz
 app_arn=$(aws robomaker list-simulation-applications | grep -o arn:.*deepracer-simapp-[^\"]*)
 aws robomaker update-simulation-application --sources="s3Bucket=$s3_bucket,s3Key=deepracer-custom-simaapp.tar.gz,architecture=X86_64" --application="$app_arn" --simulation-software-suite="name=Gazebo,version=7" --robot-software-suite="name=ROS,version=Kinetic" --rendering-engine="name=OGRE,version=1.x"
