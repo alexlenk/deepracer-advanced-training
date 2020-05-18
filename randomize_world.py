@@ -4,7 +4,7 @@ import os
 from os import path
 import subprocess
 
-restart_time = 600
+restart_time = 3600
 
 if os.environ["S3_YAML_NAME"].split("_")[0] == "eval":
     os.environ["JOB_TYPE"] = "EVALUATION"
