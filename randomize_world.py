@@ -4,7 +4,7 @@ import os
 from os import path
 import subprocess
 
-if os.environ["METRICS_S3_OBJECT_KEY"].split("/")[0] == "DeepRacer-Metrics":
+if os.environ["S3_YAML_NAME"].split("_")[0] == "eval":
     os.environ["JOB_TYPE"] = "EVALUATION"
 else:
     os.environ["JOB_TYPE"] = "TRAINING"
