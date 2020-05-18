@@ -28,3 +28,5 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
     print("Script done...")
 else:
     print("Skipping World Randomization in " + os.environ["JOB_TYPE"] + " Job")
+
+print("World: " + os.environ["WORLD_NAME"])
