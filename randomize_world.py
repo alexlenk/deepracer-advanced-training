@@ -6,15 +6,15 @@ import subprocess
 import sys
 import yaml
 
-if os.environ["S3_YAML_NAME"].split("_")[0] == "eval" or os.environ["JOB_TYPE"] == "EVALUATION":
-    os.environ["JOB_TYPE"] = "EVALUATION"
-else:
-    os.environ["JOB_TYPE"] = "TRAINING"
-
 p = subprocess.Popen("export", stdout=subprocess.PIPE, shell=True)
 (output, err) = p.communicate()
 p_status = p.wait()
 print(output)
+
+if os.environ["S3_YAML_NAME"].split("_")[0] == "eval" or os.environ.get("JOB_TYPE") == "EVALUATION":
+    os.environ["JOB_TYPE"] = "EVALUATION"
+else:
+    os.environ["JOB_TYPE"] = "TRAINING"
 
 if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYPE"] == "TRAINING":
     print("################## Executing randomize_world.sh ##################")
