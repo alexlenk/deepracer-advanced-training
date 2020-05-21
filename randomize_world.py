@@ -11,6 +11,11 @@ if os.environ["S3_YAML_NAME"].split("_")[0] == "eval":
 else:
     os.environ["JOB_TYPE"] = "TRAINING"
 
+p = subprocess.Popen("export", stdout=subprocess.PIPE, shell=True)
+(output, err) = p.communicate()
+p_status = p.wait()
+print(output)
+
 if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYPE"] == "TRAINING":
     print("################## Executing randomize_world.sh ##################")
     WORLDS=["New_York_Track", "China_track", "Virtual_May19_Train_track", "Mexico_track", "Tokyo_Training_track", "Canada_Training", "Bowtie_track"]
