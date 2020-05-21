@@ -76,8 +76,8 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
         import re
         #result = yaml.dump(eval_out, explicit_start=True)
         result = "---\n"
-        for key, value in eval_out:
-            result += key + ": \"" + value +"\"\n"
+        for key, value in eval_out.items():
+            result += key + ": \"" + str(value) +"\"\n"
         #result = re.sub(r": (.*)", r': "\1"', result)
         print(result)
         os.environ["S3_YAML_NAME"] = "Mideval.yaml"
