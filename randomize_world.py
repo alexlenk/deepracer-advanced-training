@@ -17,9 +17,9 @@ print(output)
 
 if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYPE"] == "TRAINING":
     print("################## Executing randomize_world.sh ##################")
+    print("Downloading script ...")
     WORLDS=["New_York_Track", "China_track", "Virtual_May19_Train_track", "Mexico_track", "Tokyo_Training_track", "Canada_Training", "Bowtie_track"]
     os.environ["WORLD_NAME"] = random.choice(WORLDS)
-    print("Downloading script ...")
     p = subprocess.Popen("curl https://raw.githubusercontent.com/alexlenk/deepracer-advanced-training/master/randomize_world.sh -o /home/robomaker/randomize_world.sh \n /bin/bash /home/robomaker/randomize_world.sh " + os.environ["WORLD_NAME"], stdout=subprocess.PIPE, shell=True)
     (output, err) = p.communicate()
     p_status = p.wait()
@@ -36,7 +36,9 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
         os.environ["JOB_TYPE"] = "EVALUATION"
         p = subprocess.Popen("echo 'TRAINING' | aws s3 cp - s3://" + os.environ["MODEL_S3_BUCKET"] + "/" + os.environ["MODEL_S3_PREFIX"] + "/jobtype", stdout=subprocess.PIPE, shell=True)
         restart_time = 600
+        os.environ["WORLD_NAME"] = "reinvent_base"
     else:
+        print("Staying with Job Type to TRAINING")
         os.environ["JOB_TYPE"] = "TRAINING"
         p = subprocess.Popen("echo 'EVALUATION' | aws s3 cp - s3://" + os.environ["MODEL_S3_BUCKET"] + "/" + os.environ["MODEL_S3_PREFIX"] + "/jobtype", stdout=subprocess.PIPE, shell=True)
         restart_time = 3600
