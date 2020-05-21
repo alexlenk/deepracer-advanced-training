@@ -47,7 +47,7 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
         p = subprocess.Popen("aws s3 cp --quiet s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/" + os.environ["S3_YAML_NAME"] + " -", stdout=subprocess.PIPE, shell=True)
         (training_str, err) = p.communicate()
         p_status = p.wait()
-        data = yaml.load(training_str, Loader=yaml.FullLoader)
+        data = yaml.load(training_str)
         model_name = data["MODEL_METADATA_FILE_S3_KEY"].split("/")[1]
         eval_out = {
             "METRICS_S3_OBJECT_KEY": "DeepRacer-Metrics/EvaluationMetrics-Mideval.json",
