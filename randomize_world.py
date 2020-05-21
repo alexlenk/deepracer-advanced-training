@@ -28,9 +28,11 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
     if err is not None:
         print("################### ERROR: " + str(err))
 
+    print("S3 Command: aws s3 cp --quiet s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/jobtype -")
     p = subprocess.Popen("aws s3 cp --quiet s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/jobtype -", stdout=subprocess.PIPE, shell=True)
     (jobtype, err) = p.communicate()
     p_status = p.wait()
+    print("Jobtype:" + str(jobtype))
 
     if jobtype == "EVALUATION":
         print("Switching Job Type to EVALUATION")
