@@ -71,9 +71,12 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
             "MODEL_S3_BUCKET": data["SAGEMAKER_SHARED_S3_BUCKET"],
             "CAR_COLOR": "Red"
         }
-        print(yaml.dump(eval_out, explicit_start=True))
+        import re
+        result = yaml.dump(eval_out, explicit_start=True)
+        result = re.sub(r": (.*)", r': "\1"', result)
+        print(result)
         os.environ["S3_YAML_NAME"] = "Mideval.yaml"
-        p = subprocess.Popen("echo \"" + yaml.dump(eval_out, explicit_start=True) + "\" | aws s3 cp - s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/" + os.environ["S3_YAML_NAME"], stdout=subprocess.PIPE, shell=True)
+        p = subprocess.Popen("echo '" + result + "' | aws s3 cp - s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/" + os.environ["S3_YAML_NAME"], stdout=subprocess.PIPE, shell=True)
     else:
         print("Staying with Job Type to TRAINING")
         os.environ["JOB_TYPE"] = "TRAINING"
