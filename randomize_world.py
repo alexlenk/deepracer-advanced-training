@@ -10,6 +10,7 @@ p = subprocess.Popen("export", stdout=subprocess.PIPE, shell=True)
 (output, err) = p.communicate()
 p_status = p.wait()
 print(output)
+print(sys.argv)
 
 if os.environ["S3_YAML_NAME"].split("_")[0] == "eval" or os.environ.get("JOB_TYPE") == "EVALUATION":
     os.environ["JOB_TYPE"] = "EVALUATION"
@@ -85,7 +86,7 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
 else:
     print("Skipping World Randomization in " + os.environ["JOB_TYPE"] + " Job")
 
-if os.environ["JOB_TYPE"] == "EVALUATION" and not sys.argv[2] == "evaluation.launch":
+if os.environ["JOB_TYPE"] == "EVALUATION" and sys.argv[2] == "distributed_training.launch":
     print("Setting launch type to: evaluation.launch")
     sys.argv[2] = "evaluation.launch"
 
