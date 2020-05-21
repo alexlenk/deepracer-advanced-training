@@ -3,6 +3,10 @@ import time
 import os
 from os import path
 import subprocess
+import sys
+
+print("CLI Args:")
+print(sys.argv)
 
 restart_time = 3600
 
