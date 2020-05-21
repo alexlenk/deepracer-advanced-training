@@ -49,13 +49,12 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
         (training_str, err) = p.communicate()
         p_status = p.wait()
         data = yaml.load(training_str)
-        print(data)
         model_name = data["MODEL_METADATA_FILE_S3_KEY"].split("/")[1]
         eval_out = {
             "METRICS_S3_OBJECT_KEY": "DeepRacer-Metrics/EvaluationMetrics-Mideval.json",
             "AWS_REGION": data["AWS_REGION"],
             "MODEL_NAME": model_name,
-            "NUMBER_OF_TRIALS": 20,
+            "NUMBER_OF_TRIALS": 20000,
             "RACER_NAME": model_name,
             "CAR_NAME": model_name,
             "VIDEO_JOB_TYPE": "EVALUATION",
@@ -72,22 +71,16 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
             "MODEL_S3_BUCKET": data["SAGEMAKER_SHARED_S3_BUCKET"],
             "CAR_COLOR": "Red"
         }
-        print(eval_out)
-        import re
-        #result = yaml.dump(eval_out, explicit_start=True)
         result = "---\n"
         for key, value in eval_out.items():
             result += key + ": \"" + str(value) +"\"\n"
-        #result = re.sub(r": (.*)", r': "\1"', result)
-        print(result)
         os.environ["S3_YAML_NAME"] = "Mideval.yaml"
         p = subprocess.Popen("echo '" + result + "' | aws s3 cp - s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/" + os.environ["S3_YAML_NAME"], stdout=subprocess.PIPE, shell=True)
     else:
         print("Staying with Job Type to TRAINING")
         os.environ["JOB_TYPE"] = "TRAINING"
         p = subprocess.Popen("echo 'EVALUATION' | aws s3 cp - s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/jobtype", stdout=subprocess.PIPE, shell=True)
-        #restart_time = 3600
-        restart_time = 500
+        restart_time = 1800
 
     print("Scheduling restart in " + str(restart_time) + " seconds ...")
     subprocess.Popen("sleep " + str(restart_time) + ";aws robomaker restart-simulation-job --job=\"$AWS_ROBOMAKER_SIMULATION_JOB_ARN\" --region=us-east-1", shell=True)
