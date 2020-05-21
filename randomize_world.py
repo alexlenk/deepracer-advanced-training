@@ -73,7 +73,7 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
         }
         import re
         result = yaml.dump(eval_out, explicit_start=True)
-        result = re.sub(r": (.*)", r': "\1"', result)
+        #result = re.sub(r": (.*)", r': "\1"', result)
         print(result)
         os.environ["S3_YAML_NAME"] = "Mideval.yaml"
         p = subprocess.Popen("echo '" + result + "' | aws s3 cp - s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/" + os.environ["S3_YAML_NAME"], stdout=subprocess.PIPE, shell=True)
