@@ -6,7 +6,7 @@ import subprocess
 import sys
 import yaml
 
-if os.environ["S3_YAML_NAME"].split("_")[0] == "eval":
+if os.environ["S3_YAML_NAME"].split("_")[0] == "eval" or os.environ["JOB_TYPE"] == "EVALUATION":
     os.environ["JOB_TYPE"] = "EVALUATION"
 else:
     os.environ["JOB_TYPE"] = "TRAINING"
