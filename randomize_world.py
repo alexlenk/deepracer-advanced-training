@@ -97,6 +97,8 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
         p = subprocess.Popen("aws s3 cp --quiet s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/DeepRacer-Metrics/EvaluationMetrics-Mideval_Best.json -", stdout=subprocess.PIPE, shell=True)
         (best_eval, err) = p.communicate()
         p_status = p.wait()
+        best_full_rounds = 0
+        best_average = 0
         if best_eval.strip() != "":
             best_eval_metric = json.loads(best_eval)
             completion_percentage = [metric["completion_percentage"] for metric in best_eval_metric["metrics"]]
@@ -106,9 +108,9 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
             print("Best Full Rounds:" + str(best_full_rounds))
             print("Best Average Rounds:" + str(best_average))
 
-            if curr_full_rounds > best_full_rounds or curr_full_rounds == best_full_rounds and curr_average > best_average:
-                print("New Best Model Found")
-                p = subprocess.Popen("aws s3 mv s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/DeepRacer-Metrics/EvaluationMetrics-Mideval.json s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/DeepRacer-Metrics/EvaluationMetrics-Mideval_Best.json", stdout=subprocess.PIPE, shell=True)
+        if curr_full_rounds > best_full_rounds or curr_full_rounds == best_full_rounds and curr_average > best_average:
+            print("New Best Model Found")
+            p = subprocess.Popen("aws s3 mv s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/DeepRacer-Metrics/EvaluationMetrics-Mideval.json s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/DeepRacer-Metrics/EvaluationMetrics-Mideval_Best.json", stdout=subprocess.PIPE, shell=True)
 
 
 
