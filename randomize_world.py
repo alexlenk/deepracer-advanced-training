@@ -22,11 +22,14 @@ if os.environ["S3_YAML_NAME"].split("_")[0] == "eval" or os.environ.get("JOB_TYP
 else:
     os.environ["JOB_TYPE"] = "TRAINING"
 
+eval_world = os.environ["WORLD_NAME"]
+
 if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYPE"] == "TRAINING":
     print("################## Executing randomize_world.sh ##################")
     print("Downloading script ...")
     WORLDS=["New_York_Track", "China_track", "Virtual_May19_Train_track", "Mexico_track", "Tokyo_Training_track", "Canada_Training", "Bowtie_track"]
     train_world = random.choice(WORLDS)
+    os.environ["WORLD_NAME"] = train_world
     p = subprocess.Popen("curl https://raw.githubusercontent.com/alexlenk/deepracer-advanced-training/master/randomize_world.sh -o /home/robomaker/randomize_world.sh \n /bin/bash /home/robomaker/randomize_world.sh " + train_world, stdout=subprocess.PIPE, shell=True)
     (output, err) = p.communicate()
     p_status = p.wait()
@@ -48,7 +51,7 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
         os.environ["MODEL_S3_BUCKET"] = os.environ["SAGEMAKER_SHARED_S3_BUCKET"]
         os.environ["MODEL_S3_PREFIX"] = os.environ["SAGEMAKER_SHARED_S3_PREFIX"]
         restart_time = 600
-        #os.environ["WORLD_NAME"] = "reinvent_base"
+        os.environ["WORLD_NAME"] = eval_world
 
         p = subprocess.Popen("aws s3 cp --quiet s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/" + os.environ["S3_YAML_NAME"] + " -", stdout=subprocess.PIPE, shell=True)
         (training_str, err) = p.communicate()
@@ -83,7 +86,6 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
         p = subprocess.Popen("echo '" + result + "' | aws s3 cp - s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/" + os.environ["S3_YAML_NAME"], stdout=subprocess.PIPE, shell=True)
     else:
         print("Staying with Job Type to TRAINING")
-        os.environ["WORLD_NAME"] = train_world
         os.environ["JOB_TYPE"] = "TRAINING"
         p = subprocess.Popen("echo 'EVALUATION' | aws s3 cp - s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/jobtype", stdout=subprocess.PIPE, shell=True)
         restart_time = 2700
