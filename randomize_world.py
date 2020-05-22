@@ -64,7 +64,7 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
             "CAR_NAME": model_name,
             "VIDEO_JOB_TYPE": "EVALUATION",
             "KINESIS_VIDEO_STREAM_NAME": data["KINESIS_VIDEO_STREAM_NAME"],
-            "WORLD_NAME": "reinvent_base",
+            "WORLD_NAME": os.environ["WORLD_NAME"],
             "ROBOMAKER_SIMULATION_JOB_ACCOUNT_ID": int(data["ROBOMAKER_SIMULATION_JOB_ACCOUNT_ID"]),
             "DISPLAY_NAME": model_name,
             "SIMTRACE_S3_BUCKET": data["SIMTRACE_S3_BUCKET"],
