@@ -103,8 +103,7 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
             curr_full_rounds = len([i for i in curr_completion_percentage if i == 100])
             curr_average = sum(curr_completion_percentage)/len(curr_completion_percentage)
             print("Current Model: " + str(curr_completion_percentage))
-            print("Current Full Rounds: " + str(curr_full_rounds))
-            print("Current Full Rounds %: " + str(int(curr_full_rounds/len(curr_completion_percentage))))
+            print("Current Full Rounds: " + str(curr_full_rounds)) + "/" + str(len(curr_completion_percentage)) + " (" + str(int(curr_full_rounds/len(curr_completion_percentage))) + "%)"
             print("Current Average Rounds: " + str(int(curr_average)))
 
         p = subprocess.Popen("aws s3 cp --quiet s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["METRICS_S3_OBJECT_KEY"] + "-Mideval_Best.json -", stdout=subprocess.PIPE, shell=True)
@@ -118,8 +117,7 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
             best_full_rounds = len([i for i in best_completion_percentage if i == 100])
             best_average = sum(best_completion_percentage)/len(best_completion_percentage)
             print("Best Model: " + str(best_completion_percentage))
-            print("Best Full Rounds: " + str(best_full_rounds))
-            print("Best Full Rounds %: " + str(int(best_full_rounds/len(best_completion_percentage))))
+            print("Best Full Rounds: " + str(best_full_rounds)) + "/" + str(len(best_completion_percentage)) + " (" + str(int(best_full_rounds/len(best_completion_percentage))) + "%)"
             print("Best Average Rounds: " + str(int(best_average)))
 
         #p = subprocess.Popen("aws s3 ls s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/model_best", stdout=subprocess.PIPE, shell=True)
@@ -128,7 +126,7 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
         #model_best_not_exists = data.strip() == ""
 
         if curr_full_rounds > best_full_rounds or curr_full_rounds == best_full_rounds and curr_average >= best_average:
-            subprocess.call("aws s3 mv s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["METRICS_S3_OBJECT_KEY"] + "-Mideval.json s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["METRICS_S3_OBJECT_KEY"] + "-Mideval_Best.json", shell=True)
+            subprocess.call("aws s3 cp s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["METRICS_S3_OBJECT_KEY"] + "-Mideval.json s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["METRICS_S3_OBJECT_KEY"] + "-Mideval_Best.json", shell=True)
             print("aws s3 sync s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/model/ s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/model_best/")
             subprocess.call("aws s3 sync s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/model/ s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/model_best/", shell=True)
             if curr_full_rounds > 0 or curr_average > 0:
