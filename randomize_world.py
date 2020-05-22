@@ -86,7 +86,7 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
         os.environ["WORLD_NAME"] = train_world
         os.environ["JOB_TYPE"] = "TRAINING"
         p = subprocess.Popen("echo 'EVALUATION' | aws s3 cp - s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/jobtype", stdout=subprocess.PIPE, shell=True)
-        restart_time = 1800
+        restart_time = 2700
         import json
 
         p = subprocess.Popen("aws s3 cp --quiet s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["METRICS_S3_OBJECT_KEY"] + "-Mideval.json -", stdout=subprocess.PIPE, shell=True)
