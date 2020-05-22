@@ -1,9 +1,6 @@
 #!/bin/bash
 
 WORLD=$1
-echo Copying Folder ...
-cp -rf /home/robomaker/workspace/applications/simulation-application/bundle/opt/install/deepracer_simulation_environment/share/deepracer_simulation_environment/meshes.org /home/robomaker/meshes
-ls -al /home/robomaker/workspace/applications/simulation-application/bundle/opt/install/deepracer_simulation_environment/share/deepracer_simulation_environment/meshes/
 echo Modifying World: $WORLD ...
 
 GRASS_TEXTURES_SIMPLE=(New_York_Track/textures/Wood.png reinvent/textures/Road_DIFF.png New_York_Track/textures/Concrete_01.png New_York_Track/textures/Concrete_02.png New_York_Track/textures/Concrete_03.png New_York_Track/textures/Concrete_04.png New_York_Track/textures/Concrete_05.png New_York_Track/textures/Concrete_06.png New_York_Track/textures/Concrete_07.png Canada_Training/textures/Canada_track_concrete_T_01.png Canada_Training/textures/Canada_track_concrete_T_02.png Canada_Training/textures/Canada_track_concrete_T_03.png Canada_Training/textures/Canada_track_concrete_T_04.png Canada_Training/textures/Canada_track_concrete_T_05.png New_York_Track/textures/Track_road_01.png)

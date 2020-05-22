@@ -6,11 +6,15 @@ import subprocess
 import sys
 import yaml
 
-p = subprocess.Popen("export", stdout=subprocess.PIPE, shell=True)
-(output, err) = p.communicate()
-p_status = p.wait()
-print(output)
-print(sys.argv)
+#p = subprocess.Popen("export", stdout=subprocess.PIPE, shell=True)
+#(output, err) = p.communicate()
+#p_status = p.wait()
+#print(output)
+#print(sys.argv)
+
+if not path.isdir('/home/robomaker/meshes'):
+    print("Copying Folder ...")
+    subprocess.call("cp -rf /home/robomaker/workspace/applications/simulation-application/bundle/opt/install/deepracer_simulation_environment/share/deepracer_simulation_environment/meshes.org /home/robomaker/meshes", shell=True)
 
 if os.environ["S3_YAML_NAME"].split("_")[0] == "eval" or os.environ.get("JOB_TYPE") == "EVALUATION":
     os.environ["JOB_TYPE"] = "EVALUATION"
@@ -95,8 +99,9 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
             curr_full_rounds = len([i for i in completion_percentage if i == 100])
             curr_average = sum(completion_percentage)/len(completion_percentage)
             print("Current Model: " + str(completion_percentage))
-            print("Current Full Rounds:" + str(curr_full_rounds))
-            print("Current Average Rounds:" + str(curr_average))
+            print("Current Full Rounds: " + str(curr_full_rounds))
+            print("Current Full Rounds %: " + str(int(curr_full_rounds/len(completion_percentage))))
+            print("Current Average Rounds: " + str(int(curr_average)))
 
         p = subprocess.Popen("aws s3 cp --quiet s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/DeepRacer-Metrics/EvaluationMetrics-Mideval_Best.json -", stdout=subprocess.PIPE, shell=True)
         (best_eval, err) = p.communicate()
@@ -109,8 +114,9 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
             best_full_rounds = len([i for i in completion_percentage if i == 100])
             best_average = sum(completion_percentage)/len(completion_percentage)
             print("Best Model: " + str(completion_percentage))
-            print("Best Full Rounds:" + str(best_full_rounds))
-            print("Best Average Rounds:" + str(best_average))
+            print("Best Full Rounds: " + str(best_full_rounds))
+            print("Best Full Rounds %: " + str(int(best_full_rounds/len(completion_percentage))))
+            print("Best Average Rounds: " + str(int(best_average)))
 
         if curr_full_rounds > best_full_rounds or curr_full_rounds == best_full_rounds and curr_average >= best_average:
             print("New Best Model Found")
