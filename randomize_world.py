@@ -5,6 +5,7 @@ from os import path
 import subprocess
 import sys
 import yaml
+from datetime import datetime
 
 #p = subprocess.Popen("export", stdout=subprocess.PIPE, shell=True)
 #(output, err) = p.communicate()
@@ -122,11 +123,20 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
             print("New Best Model Found")
             subprocess.call("aws s3 mv s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/DeepRacer-Metrics/EvaluationMetrics-Mideval.json s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/DeepRacer-Metrics/EvaluationMetrics-Mideval_Best.json", shell=True)
             subprocess.call("aws s3 cp s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/model/ s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/model_best/ --recursive", shell=True)
+            p = subprocess.Popen("aws s3 cp --quiet s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/trained_tracks.txt -", stdout=subprocess.PIPE, shell=True)
+            (trained_tracks, err) = p.communicate()
+            p_status = p.wait()
+            trained_tracks += datetime.now().strftime("%d.%m.%Y %H:%M:%S") + "\t" + str(best_full_rounds) + "/" + str(len(completion_percentage)) + "\t" + str(int(best_full_rounds/len(completion_percentage))) + "\t" + str(int(best_average)) + "\n"
+            subprocess.call("echo \"" + trained_tracks + "\" | aws s3 cp - s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/trained_tracks.txt", shell=True)
         else:
             print("Restoring Old Model ...")
             subprocess.call("aws s3 rm s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/model/ --recursive", shell=True)
             subprocess.call("aws s3 cp s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/model_best/ s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/model/ --recursive", shell=True)
-
+            p = subprocess.Popen("aws s3 cp --quiet s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/faild_tracks.txt -", stdout=subprocess.PIPE, shell=True)
+            (failed_tracks, err) = p.communicate()
+            p_status = p.wait()
+            failed_tracks += datetime.now().strftime("%d.%m.%Y %H:%M:%S") + "\t" + str(best_full_rounds) + "/" + str(len(completion_percentage)) + "\t" + str(int(best_full_rounds/len(completion_percentage))) + "\t" + str(int(best_average)) + "\n"
+            subprocess.call("echo \"" + failed_tracks + "\" | aws s3 cp - s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/faild_tracks.txt", shell=True)
 
 
     print("Scheduling restart in " + str(restart_time) + " seconds ...")
