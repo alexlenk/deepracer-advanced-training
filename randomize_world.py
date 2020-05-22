@@ -6,6 +6,7 @@ import subprocess
 import sys
 import yaml
 from datetime import datetime
+import json
 
 #p = subprocess.Popen("export", stdout=subprocess.PIPE, shell=True)
 #(output, err) = p.communicate()
@@ -83,13 +84,20 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
         for key, value in eval_out.items():
             result += key + ": \"" + str(value) +"\"\n"
         os.environ["S3_YAML_NAME"] = "Mideval.yaml"
-        p = subprocess.Popen("echo '" + result + "' | aws s3 cp - s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/" + os.environ["S3_YAML_NAME"], stdout=subprocess.PIPE, shell=True)
+        subprocess.call("echo '" + result + "' | aws s3 cp - s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/" + os.environ["S3_YAML_NAME"], shell=True)
+        p = subprocess.Popen("aws s3 cp --quiet s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["METRICS_S3_OBJECT_KEY"] + "-Mideval_Best.json -", stdout=subprocess.PIPE, shell=True)
+        (best_eval, err) = p.communicate()
+        p_status = p.wait()
+        if best_eval.strip() != "":
+            best_eval_metric = json.loads(best_eval)
+            best_completion_percentage = [metric["completion_percentage"] for metric in best_eval_metric["metrics"]]
+            if len(best_completion_percentage) < 12:
+                restart_time *= 2
     else:
         print("Staying with Job Type to TRAINING")
         os.environ["JOB_TYPE"] = "TRAINING"
         p = subprocess.Popen("echo 'EVALUATION' | aws s3 cp - s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/jobtype", stdout=subprocess.PIPE, shell=True)
         restart_time = 2700
-        import json
 
         p = subprocess.Popen("aws s3 cp --quiet s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["METRICS_S3_OBJECT_KEY"] + "-Mideval.json -", stdout=subprocess.PIPE, shell=True)
         (curr_eval, err) = p.communicate()
