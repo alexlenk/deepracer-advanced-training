@@ -103,7 +103,7 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
             curr_full_rounds = len([i for i in curr_completion_percentage if i == 100])
             curr_average = sum(curr_completion_percentage)/len(curr_completion_percentage)
             print("Current Model: " + str(curr_completion_percentage))
-            print("Current Full Rounds: " + str(curr_full_rounds)) + "/" + str(len(curr_completion_percentage)) + " (" + str(int(curr_full_rounds/len(curr_completion_percentage))) + "%)"
+            print("Current Full Rounds: " + str(curr_full_rounds)) + "/" + str(len(curr_completion_percentage)) + " (" + str(int(100*curr_full_rounds/len(curr_completion_percentage))) + "%)"
             print("Current Average Rounds: " + str(int(curr_average)))
 
         p = subprocess.Popen("aws s3 cp --quiet s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["METRICS_S3_OBJECT_KEY"] + "-Mideval_Best.json -", stdout=subprocess.PIPE, shell=True)
@@ -117,7 +117,7 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
             best_full_rounds = len([i for i in best_completion_percentage if i == 100])
             best_average = sum(best_completion_percentage)/len(best_completion_percentage)
             print("Best Model: " + str(best_completion_percentage))
-            print("Best Full Rounds: " + str(best_full_rounds)) + "/" + str(len(best_completion_percentage)) + " (" + str(int(best_full_rounds/len(best_completion_percentage))) + "%)"
+            print("Best Full Rounds: " + str(best_full_rounds)) + "/" + str(len(best_completion_percentage)) + " (" + str(int(100*best_full_rounds/len(best_completion_percentage))) + "%)"
             print("Best Average Rounds: " + str(int(best_average)))
 
         #p = subprocess.Popen("aws s3 ls s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/model_best", stdout=subprocess.PIPE, shell=True)
