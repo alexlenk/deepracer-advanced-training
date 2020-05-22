@@ -56,7 +56,7 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
         data = yaml.load(training_str)
         model_name = data["MODEL_METADATA_FILE_S3_KEY"].split("/")[1]
         eval_out = {
-            "METRICS_S3_OBJECT_KEY": "DeepRacer-Metrics/EvaluationMetrics-Mideval.json",
+            "METRICS_S3_OBJECT_KEY": os.environ["METRICS_S3_OBJECT_KEY"] + "-Mideval.json",
             "AWS_REGION": data["AWS_REGION"],
             "MODEL_NAME": model_name,
             "NUMBER_OF_TRIALS": 20000,
@@ -88,7 +88,7 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
         restart_time = 1800
         import json
 
-        p = subprocess.Popen("aws s3 cp --quiet s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/DeepRacer-Metrics/EvaluationMetrics-Mideval.json -", stdout=subprocess.PIPE, shell=True)
+        p = subprocess.Popen("aws s3 cp --quiet s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["METRICS_S3_OBJECT_KEY"] + "-Mideval.json -", stdout=subprocess.PIPE, shell=True)
         (curr_eval, err) = p.communicate()
         p_status = p.wait()
 
@@ -104,7 +104,7 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
             print("Current Full Rounds %: " + str(int(curr_full_rounds/len(curr_completion_percentage))))
             print("Current Average Rounds: " + str(int(curr_average)))
 
-        p = subprocess.Popen("aws s3 cp --quiet s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/DeepRacer-Metrics/EvaluationMetrics-Mideval_Best.json -", stdout=subprocess.PIPE, shell=True)
+        p = subprocess.Popen("aws s3 cp --quiet s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["METRICS_S3_OBJECT_KEY"] + "-Mideval_Best.json -", stdout=subprocess.PIPE, shell=True)
         (best_eval, err) = p.communicate()
         p_status = p.wait()
         best_full_rounds = 0
@@ -118,23 +118,24 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
             print("Best Full Rounds: " + str(best_full_rounds))
             print("Best Full Rounds %: " + str(int(best_full_rounds/len(best_completion_percentage))))
             print("Best Average Rounds: " + str(int(best_average)))
-        else:
-            p = subprocess.Popen("aws s3 ls s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/model_best", stdout=subprocess.PIPE, shell=True)
-            (data, err) = p.communicate()
-            p_status = p.wait()
-            model_best_not_exists = data.strip() == ""
 
-        if model_best_not_exists or curr_full_rounds > best_full_rounds or curr_full_rounds == best_full_rounds and curr_average >= best_average:
-            print("New Best Model Found!!")
-            subprocess.call("aws s3 mv s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/DeepRacer-Metrics/EvaluationMetrics-Mideval.json s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/DeepRacer-Metrics/EvaluationMetrics-Mideval_Best.json", shell=True)
+        #p = subprocess.Popen("aws s3 ls s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/model_best", stdout=subprocess.PIPE, shell=True)
+        #(data, err) = p.communicate()
+        #p_status = p.wait()
+        #model_best_not_exists = data.strip() == ""
+
+        if curr_full_rounds > best_full_rounds or curr_full_rounds == best_full_rounds and curr_average >= best_average:
+            subprocess.call("aws s3 mv s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["METRICS_S3_OBJECT_KEY"] + "-Mideval.json s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["METRICS_S3_OBJECT_KEY"] + "-Mideval_Best.json", shell=True)
             print("aws s3 cp s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/model/ s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/model_best/ --recursive")
             subprocess.call("aws s3 cp s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/model/ s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/model_best/ --recursive", shell=True)
-            p = subprocess.Popen("aws s3 cp --quiet s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/trained_tracks -", stdout=subprocess.PIPE, shell=True)
-            (trained_tracks, err) = p.communicate()
-            p_status = p.wait()
-            trained_tracks = trained_tracks.strip()
-            trained_tracks += datetime.now().strftime("%d.%m.%Y %H:%M:%S") + "\t" + str(curr_full_rounds) + "/" + str(len(curr_completion_percentage)) + "\t" + str(int(curr_full_rounds/len(best_completion_percentage))) + "\t" + str(int(curr_average)) + "\n"
-            subprocess.call("echo \"" + trained_tracks + "\" | aws s3 cp - s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/trained_tracks --content-type=text/plain", shell=True)
+            if curr_full_rounds > 0 or curr_average > 0:
+                print("New Best Model Found!!")
+                p = subprocess.Popen("aws s3 cp --quiet s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/trained_tracks -", stdout=subprocess.PIPE, shell=True)
+                (trained_tracks, err) = p.communicate()
+                p_status = p.wait()
+                trained_tracks = trained_tracks.strip()
+                trained_tracks += datetime.now().strftime("%d.%m.%Y %H:%M:%S") + "\t" + str(curr_full_rounds) + "/" + str(len(curr_completion_percentage)) + "\t" + str(int(curr_full_rounds/len(best_completion_percentage))) + "\t" + str(int(curr_average)) + "\n"
+                subprocess.call("echo \"" + trained_tracks + "\" | aws s3 cp - s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/trained_tracks --content-type=text/plain", shell=True)
         else:
             print("Restoring Old Model ...")
             subprocess.call("aws s3 rm s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/model/ --recursive", shell=True)
