@@ -118,8 +118,13 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
             print("Best Full Rounds: " + str(best_full_rounds))
             print("Best Full Rounds %: " + str(int(best_full_rounds/len(best_completion_percentage))))
             print("Best Average Rounds: " + str(int(best_average)))
+        else:
+            p = subprocess.Popen("aws s3 ls s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/model_best", stdout=subprocess.PIPE, shell=True)
+            (data, err) = p.communicate()
+            p_status = p.wait()
+            model_best_not_exists = str(data).strip() == ""
 
-        if curr_full_rounds > best_full_rounds or curr_full_rounds == best_full_rounds and curr_average >= best_average:
+        if model_best_not_exists or curr_full_rounds > best_full_rounds or curr_full_rounds == best_full_rounds and curr_average >= best_average:
             print("New Best Model Found!!")
             subprocess.call("aws s3 mv s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/DeepRacer-Metrics/EvaluationMetrics-Mideval.json s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/DeepRacer-Metrics/EvaluationMetrics-Mideval_Best.json", shell=True)
             print("aws s3 cp s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/model/ s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/model_best/ --recursive")
