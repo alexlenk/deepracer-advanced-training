@@ -48,7 +48,7 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
         os.environ["MODEL_S3_BUCKET"] = os.environ["SAGEMAKER_SHARED_S3_BUCKET"]
         os.environ["MODEL_S3_PREFIX"] = os.environ["SAGEMAKER_SHARED_S3_PREFIX"]
         restart_time = 600
-        os.environ["WORLD_NAME"] = "reinvent_base"
+        #os.environ["WORLD_NAME"] = "reinvent_base"
 
         p = subprocess.Popen("aws s3 cp --quiet s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/" + os.environ["S3_YAML_NAME"] + " -", stdout=subprocess.PIPE, shell=True)
         (training_str, err) = p.communicate()
