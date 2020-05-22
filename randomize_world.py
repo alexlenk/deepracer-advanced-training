@@ -90,9 +90,9 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
         p_status = p.wait()
         if best_eval.strip() != "":
             best_eval_metric = json.loads(best_eval)
-            best_completion_percentage = [metric["completion_percentage"] for metric in best_eval_metric["metrics"]]
-            if len(best_completion_percentage) < 12:
-                restart_time *= 2
+            best_elapsed_time_in_milliseconds = [metric["elapsed_time_in_milliseconds"] for metric in best_eval_metric["metrics"]]
+            mean_round_time = int((sum(best_elapsed_time_in_milliseconds)/len(best_elapsed_time_in_milliseconds))/1000)
+            restart_time = min(restart_time, mean_round_time * 15)
     else:
         print("Staying with Job Type to TRAINING")
         os.environ["JOB_TYPE"] = "TRAINING"
@@ -144,7 +144,7 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
                 (trained_tracks, err) = p.communicate()
                 p_status = p.wait()
                 trained_tracks = trained_tracks.strip()
-                trained_tracks += "\n" + datetime.now().strftime("%d.%m.%Y %H:%M:%S") + "\t" + str(curr_full_rounds) + "/" + str(len(curr_completion_percentage)) + "\t" + str(int(curr_full_rounds/len(curr_completion_percentage))) + "\t" + str(int(curr_average))
+                trained_tracks += "\n" + datetime.now().strftime("%d.%m.%Y %H:%M:%S") + "\t" + str(curr_full_rounds) + "/" + str(len(curr_completion_percentage)) + "\t" + str(int(100*curr_full_rounds/len(curr_completion_percentage))) + "%\t" + str(int(curr_average))
                 subprocess.call("echo \"" + trained_tracks + "\" | aws s3 cp - s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/trained_tracks --content-type=text/plain", shell=True)
         else:
             print("Restoring Old Model ...")
@@ -154,7 +154,7 @@ if not path.isfile('/home/robomaker/randomize_world.sh') and os.environ["JOB_TYP
             (failed_tracks, err) = p.communicate()
             p_status = p.wait()
             failed_tracks = failed_tracks.strip()
-            failed_tracks += "\n" + datetime.now().strftime("%d.%m.%Y %H:%M:%S") + "\t" + str(curr_full_rounds) + "/" + str(len(curr_completion_percentage)) + "\t" + str(int(curr_full_rounds/len(curr_completion_percentage))) + "\t" + str(int(best_average))
+            failed_tracks += "\n" + datetime.now().strftime("%d.%m.%Y %H:%M:%S") + "\t" + str(curr_full_rounds) + "/" + str(len(curr_completion_percentage)) + "\t" + str(int(100*curr_full_rounds/len(curr_completion_percentage))) + "%\t" + str(int(best_average))
             subprocess.call("echo \"" + failed_tracks + "\" | aws s3 cp - s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/failed_tracks --content-type=text/plain", shell=True)
 
     print("Scheduling restart in " + str(restart_time) + " seconds ...")
