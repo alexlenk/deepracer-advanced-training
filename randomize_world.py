@@ -89,9 +89,11 @@ def randomize():
             p_status = p.wait()
             if best_eval.strip() != "":
                 best_eval_metric = json.loads(best_eval)
+                best_completion_percentage = [metric["completion_percentage"] for metric in best_eval_metric["metrics"]]
                 best_elapsed_time_in_milliseconds = [metric["elapsed_time_in_milliseconds"] for metric in best_eval_metric["metrics"]]
+                best_average = int(sum(best_completion_percentage)/len(best_completion_percentage))
                 mean_round_time = int((sum(best_elapsed_time_in_milliseconds)/len(best_elapsed_time_in_milliseconds))/1000)
-                restart_time = min(restart_time, mean_round_time * 15)
+                restart_time = min(restart_time, int(mean_round_time/mean_round_time) * 15)
         else:
             print("Staying with Job Type to TRAINING")
             os.environ["JOB_TYPE"] = "TRAINING"
