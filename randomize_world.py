@@ -7,12 +7,27 @@ import sys
 import yaml
 from datetime import datetime
 import json
+from markov.utils import  get_boto_config
+import boto3
 
-#p = subprocess.Popen("export", stdout=subprocess.PIPE, shell=True)
-#(output, err) = p.communicate()
-#p_status = p.wait()
-#print(output)
-#print(sys.argv)
+
+def delete_folder(bucket, prefix):
+    session = boto3.session.Session()
+    s3_client = session.client('s3', region_name="us-east-1", config=get_boto_config())
+
+    response = s3_client.list_objects_v2(Bucket=bucket, Prefix=prefix)
+
+    for object in response['Contents']:
+        print('Deleting', object['Key'])
+        s3_client.delete_object(Bucket=bucket, Key=object['Key'])
+
+delete_folder("aws-deepracer-e9344cb4-72c3-40b9-86db-eb4ab5101463","DeepRacer-SageMaker-RoboMaker-comm-261497871845-20200522084700-bdc34eed-3e43-4876-bc92-2d1f1c1048e5/model_best/")
+
+p = subprocess.Popen("export", stdout=subprocess.PIPE, shell=True)
+(output, err) = p.communicate()
+p_status = p.wait()
+print(output)
+print(sys.argv)
 
 if not path.isdir('/home/robomaker/meshes'):
     print("Copying Folder ...")
