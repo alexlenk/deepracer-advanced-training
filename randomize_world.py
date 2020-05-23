@@ -178,4 +178,4 @@ def randomize():
 
     print("World: " + os.environ["WORLD_NAME"])
 
-#randomize()
+randomize()
