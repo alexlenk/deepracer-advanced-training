@@ -93,7 +93,7 @@ def randomize():
                 best_elapsed_time_in_milliseconds = [metric["elapsed_time_in_milliseconds"] for metric in best_eval_metric["metrics"]]
                 best_average = int(sum(best_completion_percentage)/len(best_completion_percentage))
                 mean_round_time = int((sum(best_elapsed_time_in_milliseconds)/len(best_elapsed_time_in_milliseconds))/1000)
-                restart_time = max(min(restart_time, int(mean_round_time/best_average) * 15), 25*60)
+                restart_time = min(max(restart_time, int(mean_round_time/best_average) * 15), 25*60)
         else:
             print("Staying with Job Type to TRAINING")
             os.environ["JOB_TYPE"] = "TRAINING"
