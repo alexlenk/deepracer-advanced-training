@@ -150,7 +150,7 @@ def randomize():
                     else:
                         trained_tracks += "\n"
 
-                    trained_tracks += datetime.now().strftime("%d.%m.%Y %H:%M:%S") + "\t" + str(curr_full_rounds) + "/" + str(len(curr_completion_percentage)) + "%\t" + str(int(100*curr_full_rounds/len(curr_completion_percentage))) + "%\t" + str(int(curr_average))
+                    trained_tracks += datetime.now().strftime("%d.%m.%Y %H:%M:%S") + "\t" + str(curr_full_rounds) + "/" + str(len(curr_completion_percentage)) + "\t" + str(int(100*curr_full_rounds/len(curr_completion_percentage))) + "%\t" + str(int(curr_average)) + "%"
                     subprocess.call("echo \"" + trained_tracks + "\" | aws s3 cp - s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/trained_tracks --content-type=text/plain", shell=True)
             else:
                 print("Restoring Old Model ...")
@@ -165,7 +165,7 @@ def randomize():
                     failed_tracks = "Date and Time\tFull Rounds\tFull Round %\tAverage Completed\n"
                 else:
                     failed_tracks += "\n"
-                failed_tracks += datetime.now().strftime("%d.%m.%Y %H:%M:%S") + "\t" + str(curr_full_rounds) + "/" + str(len(curr_completion_percentage)) + "%\t" + str(int(100*curr_full_rounds/len(curr_completion_percentage))) + "%\t" + str(int(best_average))
+                failed_tracks += datetime.now().strftime("%d.%m.%Y %H:%M:%S") + "\t" + str(curr_full_rounds) + "/" + str(len(curr_completion_percentage)) + "\t" + str(int(100*curr_full_rounds/len(curr_completion_percentage))) + "%\t" + str(int(best_average)) + "%"
                 subprocess.call("echo \"" + failed_tracks + "\" | aws s3 cp - s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/failed_tracks --content-type=text/plain", shell=True)
 
         print("Scheduling restart in " + str(restart_time) + " seconds ...")
