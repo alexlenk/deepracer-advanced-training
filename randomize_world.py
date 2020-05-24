@@ -97,13 +97,18 @@ def randomize():
         else:
             print("Staying with Job Type to TRAINING")
             os.environ["JOB_TYPE"] = "TRAINING"
-            p = subprocess.Popen("echo 'EVALUATION' | aws s3 cp - s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/jobtype", stdout=subprocess.PIPE, shell=True)
+            subprocess.call("echo 'EVALUATION' | aws s3 cp - s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/jobtype", shell=True)
             restart_time = 2700
+
+            p = subprocess.Popen("aws s3 cp --quiet s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/" + os.environ["S3_YAML_NAME"] + " -", stdout=subprocess.PIPE, shell=True)
+            (output, err) = p.communicate()
+            p_status = p.wait()
+            output = output.strip().replace(eval_world, os.environ["WORLD_NAME"])
+            subprocess.call("echo '" + output + "' | aws s3 cp - s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["SAGEMAKER_SHARED_S3_PREFIX"] + "/" + os.environ["S3_YAML_NAME"], shell=True)
 
             p = subprocess.Popen("aws s3 cp --quiet s3://" + os.environ["SAGEMAKER_SHARED_S3_BUCKET"] + "/" + os.environ["METRICS_S3_OBJECT_KEY"] + "-Mideval.json -", stdout=subprocess.PIPE, shell=True)
             (curr_eval, err) = p.communicate()
             p_status = p.wait()
-
             curr_full_rounds = 0
             curr_average = 0
             if curr_eval.strip() != "":
