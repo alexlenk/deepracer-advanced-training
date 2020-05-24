@@ -8,14 +8,17 @@ DIR="build/simapp/bundle/opt/install/deepracer_simulation_environment/share/deep
 mv $DIR/meshes $DIR/meshes.org
 ln -s /home/robomaker/meshes $DIR/meshes
 
-sed -i 's/rospy.get_param("WORLD_NAME")/os.environ["WORLD_NAME"]/g' build/simapp/bundle/opt/install/sagemaker_rl_agent/lib/python3.5/site-packages/markov/track_geom/track_data.py
-sed -i 's/rospy.get_param("WORLD_NAME")/os.environ["WORLD_NAME"]/g' build/simapp/bundle/opt/install/deepracer_simulation_environment/lib/python2.7/dist-packages/mp4_saving/utils.py
+#sed -i 's/rospy.get_param("WORLD_NAME")/os.environ["WORLD_NAME"]/g' build/simapp/bundle/opt/install/sagemaker_rl_agent/lib/python3.5/site-packages/markov/track_geom/track_data.py
+#sed -i 's/rospy.get_param("WORLD_NAME")/os.environ["WORLD_NAME"]/g' build/simapp/bundle/opt/install/deepracer_simulation_environment/lib/python2.7/dist-packages/mp4_saving/utils.py
 
 sed -i 's/import roslaunch/import subprocess, sys\
 subprocess.call("curl https:\/\/raw.githubusercontent.com\/alexlenk\/deepracer-advanced-training\/master\/randomize_world.py -o \/home\/robomaker\/randomize_world.py", shell=True)\
 sys.path.insert(1, "\/home\/robomaker")\
 import randomize_world\
 import roslaunch/g' build/simapp/bundle/opt/ros/kinetic/bin/roslaunch
+sed -i 's/import shutil/import shutil\
+print("############### SUCCESS: SCRPIT EXECUTED ###############")/g' build/simapp/bundle/opt/install/sagemaker_rl_agent/lib/python3.5/site-packages/markov/utils.py
+
 python3 sim_app_bundler.py --tar
 
 s3_bucket=$(aws s3 ls --region=us-east-1 | grep -o deepracer-simapp-.*)
